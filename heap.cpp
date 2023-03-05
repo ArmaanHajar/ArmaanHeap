@@ -7,11 +7,12 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 
 void print(int* heap, int location, int space);
-void heapSort(int heap[], int heapCount);
+void heapSort(int* heap, int heapCount);
 
 // right child: index * 2 + 1
 // left child: index * 2
@@ -70,14 +71,65 @@ int main() {
         }
       }
     }
-    else if (input[0] == 'G' || input[0] == 'g') { // generates random numbers
-      
+    else if (input[0] == 'G' || input[0] == 'g') { // generates random numbers from numbers.txt file
+      ifstream numbers;
+      numbers.open("numbers.txt");
+      int count = 0;
+
+      if (heapCount > 100) {
+        break;
+        cout << "Heap is Full!" << endl;
+      }
+      for (int i = heapCount; i < 20; i++) {
+        if (heapCount > 100) {
+          break;
+          cout << "Heap is Full!" << endl;
+        }
+        else {
+          numbers >> heap[i];
+          heapCount++;
+        }
+      }
+      numbers.close();
+      heapSort(heap, heapCount);
     }
     else if (input[1] == 'R' || input[1] == 'r') { // prints all students inputted
-      print(heap, 0, 0);
+      if (heapCount == 0) {
+        cout << "Heap is Empty!" << endl;
+      }
+      else {
+        cout << "Heap: " << endl;
+        print(heap, 0, 0);
+      }
     }
-    else if (input[2] == 'L' || input[2] == 'l') { // deletes a number
+    else if (input[0] == 'D' || input[0] == 'd') { // either deletes root or deletes whole list
+      char tempInput[10];
+      cout << "Do You Want To Delete The Root Or The Whole List? (ROOT/WHOLE)" << endl;
+      cin.get(tempInput, 10);
+      cin.ignore(1, '\n');
 
+      if (tempInput[0] == 'R' || tempInput[0] == 'r') { // deletes root
+        if (heapCount == 0) {
+          cout << "Heap is Empty!" << endl;
+        }
+        else {
+          cout << "Deleted: " << heap[0] << endl;
+          for (int i = 0; i < heapCount; i++) {
+            heap[i] = heap[i + 1];
+          }
+          heapCount--;
+          heapSort(heap, heapCount);
+        }
+      }
+      else if (tempInput[0] == 'W' || tempInput[0] == 'w') { // deletes whole list
+        for (int i = 0; i < 100; i++) {
+          heap[i] = 0;
+        }
+        heapCount = 0;
+      }
+      else {
+        cout << "Not Sure What You're Trying to Do" << endl;
+      }
     }
     else if (input[0] == 'Q' || input[0] == 'q') { // ends program
       cout << "Thank You For Using the Student List Maker!" << endl;
@@ -88,6 +140,7 @@ int main() {
       cout << "Type \"PRINT\" To Print Out All Stored Students" << endl;
       cout << "Type \"DELETE\" To Delete A Student" << endl;
       cout << "Type \"QUIT\" To End Program" << endl;
+      cout << "Heap Count: " << heapCount << endl;
     }
     else {
       cout << "Not Sure What You're Trying to Do" << endl;
@@ -96,17 +149,19 @@ int main() {
   return 0;
 }
 
-void heapSort(int heap[], int heapCount) {
-  for (int i = 0; i <= heapCount; i++) {
-    int parent = floor(heap[i] / 2);
-    int child = heapCount;
-    if (heap[child] > heap[parent]) {
-      int temp = heap[child];
-      heap[child] = heap[parent];
-      heap[parent] = temp;
+// sorting so that a parent is not smaller than it's children 
+void heapSort(int* heap, int heapCount) {
+  for (int current = 0; current < heapCount - 1; current++) {
+    for (int next = current + 1; next < heapCount; next++) {
+      if (heap[current] < heap[next]) {
+        int temp = heap[current];
+        heap[current] = heap[next];
+        heap[next] = temp;
+      }
     }
   }
 }
+
 
 void print(int* heap, int location, int space){
   if (heap[location] == 0){
@@ -114,12 +169,12 @@ void print(int* heap, int location, int space){
   }
   space += 10;
 
-  print(heap, location * 2, space);
+  print(heap, location * 2 + 1, space);
 
   cout << "\n" <<endl;
-  for (int i = 10; i < space; i++){
+  for (int i = 10; i < space; i++) {
     cout << " ";
   }
   cout << heap[location] << "\n";
-  print(heap, location * 2, space);
+  print(heap, location * 2 + 2, space);
 }
