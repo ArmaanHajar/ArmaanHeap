@@ -109,6 +109,12 @@ int main() {
         }
       }
       else if (tempInput[0] == 'W' || tempInput[0] == 'w') { // deletes whole list
+        cout << "Deleted: ";
+        for (int i = 0; i < heapCount; i++) {
+          cout << heap[i] << " ";
+        }
+        cout << endl;
+        
         for (int i = 0; i < 100; i++) { // sets all values in heap to 0
           heap[i] = 0;
         }
@@ -119,7 +125,7 @@ int main() {
       }
     }
     else if (input[0] == 'Q' || input[0] == 'q') { // ends program
-      cout << "Thank You For Using the Student List Maker!" << endl;
+      cout << "Thank You For Using the Heap Maker!" << endl;
       running = false;
     }
     else if (input[0] == 'H' || input[0] == 'h') { // prints help message
